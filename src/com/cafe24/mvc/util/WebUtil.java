@@ -8,14 +8,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class WebUtil {
+
+	public static Integer checkParameter(String value, Integer defaultValue) {
+
+		return defaultValue;
+	}
+
+	public static Long checkParameter(String value, Long defaultValue) {
+
+		return defaultValue;
+	}
+
+	public static String checkParameter(String value, String defaultValue) {
+
+		return defaultValue;
+	}
+
 	public static void redirect(HttpServletRequest request, HttpServletResponse response, String url)
 			throws IOException {
 		response.sendRedirect(url);
-		
-		
+
 	}
-	
-	
+
 	public static void forward(HttpServletRequest request, HttpServletResponse response, String path)
 			throws ServletException, IOException {
 		RequestDispatcher rd = request.getRequestDispatcher(path);

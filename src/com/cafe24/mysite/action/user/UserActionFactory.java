@@ -15,9 +15,26 @@ public class UserActionFactory extends AbstractActionFactory {
 
 		} else if ("loginform".equals(actionName)) {
 			action = new LoginFormAction();
+		} else if ("login".equals(actionName)) {
+			action = new LoginAction();
+		} else if ("logout".equals(actionName)) {
+			action = new LogoutAction();
+		}
+
+		else if ("joinsuccess".equals(actionName)) {
+			action = new JoinSuccessAction();
+		} else if ("join".equals(actionName)) {
+			action = new JoinAction();
+		}
+
+		else if ("modifyform".equals(actionName)) {
+			action = new ModifyFormAction();
+		} else if ("modify".equals(actionName)) {
+			action = new ModifyAction();
+		} else if ("modifysuccess".equals(actionName)) {
+			action = new ModifySuccessAction();
 		} else {
 			action = new IndexAction();
-			// WebUtil.redirect(request, response, "/mysite/main");
 		}
 
 		return action;

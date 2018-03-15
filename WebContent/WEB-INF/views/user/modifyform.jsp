@@ -11,12 +11,14 @@
 </head>
 <body>
 	<div id="container">
-		<c:import url="/WEB-INF/views/includes/header.jsp"/>
+		<jsp:include page="/WEB-INF/views/includes/header.jsp"/>
 		<div id="content">
 			<div id="user">
 
 				<form id="join-form" name="joinForm" method="post" action="/mysite/user">
-					<input type="hidden" name="a" value="join"/>
+					<input type="hidden" name="a" value="modify"/>
+					<input type='hidden' name="no" value="${param.no}">
+					
 					<label class="block-label" for="name">이름</label>
 					<input id="name" name="name" type="text" value="">
 
@@ -39,15 +41,13 @@
 						<label>서비스 약관에 동의합니다.</label>
 					</fieldset>
 					
-					<input type="submit" value="가입하기">
+					<input type="submit" value="수정하기">
 					
 				</form>
 			</div>
 		</div>
-			<c:import url="/WEB-INF/views/includes/navigation.jsp">
-			<c:param name="menu" value=""/>
-		</c:import>
-		<c:import url="/WEB-INF/views/includes/footer.jsp"/>
+			<jsp:include page="/WEB-INF/views/includes/navigation.jsp"/>
+			<jsp:include page="/WEB-INF/views/includes/footer.jsp"/>
 	</div>
 </body>
 </html>
