@@ -27,6 +27,13 @@ public class ModifyAction implements Action {
 		vo.setGender(gender);
 		vo.setNo(Long.parseLong(no));
 
+		if ("".equals(vo.getName())) {
+			/* 인증실패 */
+			request.setAttribute("name", "이름을 입력하세요");
+			WebUtil.forward(request, response, "WEB-INF/views/user/modifyform.jsp");
+			return;
+		}
+
 		UserDao dao = new UserDao();
 		dao.update(vo);
 

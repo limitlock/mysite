@@ -1,7 +1,6 @@
 package com.cafe24.mysite.action.board;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,17 +11,25 @@ import com.cafe24.mvc.util.WebUtil;
 import com.cafe24.mysite.dao.BoardDao;
 import com.cafe24.mysite.vo.BoardVo;
 
-public class ListAction implements Action {
+public class WriteAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String page = request.getParameter("page");
+		request.setCharacterEncoding("UTF-8");
+
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");
+		String writerNo = request.getParameter("writerNo");
+
+		BoardVo vo = new BoardVo();
+		vo.setTitle(title);
+		vo.setContent(content);
+		vo.setWriterNo(Long.parseLong(writerNo));
+
 		BoardDao dao = new BoardDao();
-		List<BoardVo> list = dao.getList(Integer.parseInt(page));
+		dao.insert(vo);
 
-		request.setAttribute("list", list);
-
-		WebUtil.forward(request, response, "/WEB-INF/views/board/list.jsp");
+		WebUtil.redirect(request, response, "/mysite/board?a=list");
 
 	}
 
