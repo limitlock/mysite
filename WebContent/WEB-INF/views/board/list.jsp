@@ -62,11 +62,12 @@
 				<div id="underpoint" class="pager">
 					<ul>
 						<c:set var="count" value="${fn:length(list) }" />
-						<li><a href="">◀ ${count }</a></li>
+						<li><a href="">◀ ${ss = count/5 }</a></li>
 						<c:forEach begin="1" end="5" step="1" var="i" varStatus="status">
+							<p style="display: none">${index = count%10 }</p>
 							<c:choose>
-								<c:when test="${count % 10 == 0 }">
-									<li><a href="/mysite/board?a=list&page=${i }">${i }</a></li>
+								<c:when test="${index ==  0}">
+									<li><a href="/mysite/board?a=list&page=${i }">${i }</a></li> 
 								</c:when>
 								<c:otherwise>
 									<li>${i }</li>
