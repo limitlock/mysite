@@ -4,8 +4,8 @@ public class BoardVo {
 	private Long no;
 	private String title;
 	private String content;
-	private Long gNo;
-	private Long oNo;
+	private Long groupNo;
+	private Long orderNo;
 	private Long depth;
 	private String curDate;
 	private Long hit;
@@ -37,20 +37,20 @@ public class BoardVo {
 		this.content = content;
 	}
 
-	public Long getgNo() {
-		return gNo;
+	public Long getGroupNo() {
+		return groupNo;
 	}
 
-	public void setgNo(Long gNo) {
-		this.gNo = gNo;
+	public void setGroupNo(Long groupNo) {
+		this.groupNo = groupNo;
 	}
 
-	public Long getoNo() {
-		return oNo;
+	public Long getOrderNo() {
+		return orderNo;
 	}
 
-	public void setoNo(Long oNo) {
-		this.oNo = oNo;
+	public void setOrderNo(Long orderNo) {
+		this.orderNo = orderNo;
 	}
 
 	public Long getDepth() {

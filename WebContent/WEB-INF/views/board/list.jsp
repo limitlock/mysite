@@ -36,12 +36,12 @@
 							<td>${count -status.count +1 }</td>
 							<td style="text-align: left; padding-left: ${20*vo.depth}px">
 								<c:choose>
-									<c:when test="${vo.oNo > 1}">
+									<c:when test="${vo.orderNo > 1}">
 										<img src="/mysite/assets/images/reply.png" />
-										<a href="/mysite/board?a=view&no=${vo.no }">${vo.title }</a>
+										<a href="/mysite/board?a=view&no=${vo.no }&groupNo=${vo.groupNo }&orderNo=${vo.orderNo}&depth=${vo.depth}">${vo.title }</a>
 									</c:when>
-									<c:otherwise>
-										<a href="/mysite/board?a=view&no=${vo.no }">${vo.title }</a>
+									<c:otherwise>										
+										<a href="/mysite/board?a=view&no=${vo.no }&groupNo=${vo.groupNo }&orderNo=${vo.orderNo}&depth=${vo.depth}" >${vo.title }</a>
 									</c:otherwise>
 								</c:choose>
 							</td>

@@ -17,13 +17,15 @@ public class ViewFormAction implements Action {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String boardNo = request.getParameter("no");
+
 		BoardDao dao = new BoardDao();
 		List<BoardVo> list = dao.viewGetList(Integer.parseInt(boardNo));
-		
+
 		BoardVo vo = new BoardVo();
 		vo.setNo(Long.parseLong(boardNo));
+
 		dao.hitUpdate(vo);
-		
+
 		request.setAttribute("list", list);
 
 		WebUtil.forward(request, response, "/WEB-INF/views/board/view.jsp");

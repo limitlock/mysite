@@ -9,13 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cafe24.mysite.vo.BoardVo;
-import com.cafe24.mysite.vo.GuestBookVo;
 
 public class BoardDao {
 
 	private static final int LIST_COUNT = 10;
 
-	
 	public List<BoardVo> search(String inputTitle) {
 		List<BoardVo> list = new ArrayList<>();
 
@@ -43,8 +41,8 @@ public class BoardDao {
 				Long hit = rs.getLong(4);
 				String writer = rs.getString(5);
 
-				Long gNo = rs.getLong(6);
-				Long oNo = rs.getLong(7);
+				Long groupNo = rs.getLong(6);
+				Long orderNo = rs.getLong(7);
 				Long depth = rs.getLong(8);
 
 				Long writerNo = rs.getLong(9);
@@ -57,8 +55,8 @@ public class BoardDao {
 				vo.setHit(hit);
 				vo.setWriter(writer);
 
-				vo.setgNo(gNo);
-				vo.setoNo(oNo);
+				vo.setGroupNo(groupNo);
+				vo.setOrderNo(orderNo);
 				vo.setDepth(depth);
 
 				vo.setWriterNo(writerNo);
@@ -300,6 +298,103 @@ public class BoardDao {
 		return result;
 	}
 
+	public boolean replyUpdate(BoardVo vo) {
+		boolean result = false;
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			conn = getConnection();
+			String sql = "update board set order_no = order_no + 1 where group_no = ? and order_no = ?";
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setLong(1, vo.getGroupNo());
+			pstmt.setLong(2, vo.getOrderNo());
+			pstmt.setLong(3, vo.getNo());
+
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+
+	}
+
+	public boolean replyInsert(BoardVo vo) {
+		boolean result = false;
+		Long max = 0L;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		PreparedStatement mstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+
+			String max_sql = "select max(order_no) from board where group_no = ?";
+			
+			mstmt = conn.prepareStatement(max_sql);
+			System.out.println("vo.g: "+vo.getGroupNo());
+			mstmt.setLong(1, vo.getGroupNo());
+			
+			rs = mstmt.executeQuery();
+
+			if (rs.next()) {
+				max = rs.getLong(1);
+			}
+			System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmm" + max);
+
+			// 번호, 제목, 내용, 그룹번호, 그룹내 순서, 깊이, 날짜, 조회수, 회원번호
+			String sql = "insert into board values(null, ?, ?, ?, ?, ?, now(),0, ?)";
+
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, vo.getTitle());
+			pstmt.setString(2, vo.getContent());
+
+			pstmt.setLong(3, vo.getGroupNo());
+			pstmt.setLong(4, max+1);
+
+			pstmt.setLong(5, vo.getDepth() + 1);
+			pstmt.setLong(6, vo.getWriterNo());
+
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
 	// public List<BoardVo> getList(int page)
 	public List<BoardVo> getList() {
 		List<BoardVo> list = new ArrayList<>();
@@ -329,8 +424,8 @@ public class BoardDao {
 				Long hit = rs.getLong(4);
 				String writer = rs.getString(5);
 
-				Long gNo = rs.getLong(6);
-				Long oNo = rs.getLong(7);
+				Long groupNo = rs.getLong(6);
+				Long orderNo = rs.getLong(7);
 				Long depth = rs.getLong(8);
 
 				Long writerNo = rs.getLong(9);
@@ -343,8 +438,8 @@ public class BoardDao {
 				vo.setHit(hit);
 				vo.setWriter(writer);
 
-				vo.setgNo(gNo);
-				vo.setoNo(oNo);
+				vo.setGroupNo(groupNo);
+				vo.setOrderNo(orderNo);
 				vo.setDepth(depth);
 
 				vo.setWriterNo(writerNo);

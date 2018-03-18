@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>mysite</title>
@@ -15,45 +15,37 @@
 	<div id="container">
 		<c:import url="/WEB-INF/views/includes/header.jsp" />
 		<div id="content">
-			<c:forEach items="${list }" var="vo" varStatus="status">
-				<div id="board" class="board-form">
+			<div id="board">
+				<form class="board-form" method="post" action="/mysite/board">
+					<input type="hidden" name="a" value="reply"> 
+					<input type="hidden" name="no" value="${param.no }">
+					<input type="hidden" name="groupNo" value="${param.groupNo }"> 
+					<input type="hidden" name="orderNo" value="${param.orderNo }"> 
+					<input type="hidden" name="depth" value="${param.depth }"> 
+					<input type="hidden" name="writerNo" value="${authUser.no }">   
 					<table class="tbl-ex">
 						<tr>
-							<th colspan="2">글보기</th>
+							<th colspan="2">답글쓰기</th>
 						</tr>
-
 						<tr>
 							<td class="label">제목</td>
-							<td>${vo.title }</td>
+							<td><input type="text" name="title" value=""></td>
 						</tr>
 						<tr>
 							<td class="label">내용</td>
-							<td>
-								<div class="view-content">${vo.content }</div>
-							</td>
+							<td><textarea id="content" name="content"></textarea></td>
 						</tr>
-
 					</table>
 					<div class="bottom">
-						<a href="/mysite/board?a=list">글목록</a> <a
-							href="/mysite/comment?boardNo=${vo.no }">댓글</a>
-						<c:choose>
-							<c:when test="${authUser.no == vo.writerNo }">
-								<a href="/mysite/board?a=modifyform&no=${vo.no }">글수정</a>
-							</c:when>
-							<c:when test="${not empty authUser }">
-								<a href="/mysite/board?a=replywrite&no=${param.no }&groupNo=${param.groupNo }&orderNo=${param.orderNo}&depth=${param.depth}">답글</a>
-							</c:when>
-						</c:choose>
+						<a href="/mysite/board">취소</a> <input type="submit" value="등록">
 					</div>
-				</div>
-			</c:forEach>
+				</form>
+			</div>
 		</div>
 		<c:import url="/WEB-INF/views/includes/navigation.jsp">
 			<c:param name="menu" value="board" />
 		</c:import>
 		<c:import url="/WEB-INF/views/includes/footer.jsp" />
 	</div>
-
 </body>
 </html>
