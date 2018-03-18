@@ -12,14 +12,14 @@ import com.cafe24.mvc.util.WebUtil;
 import com.cafe24.mysite.dao.BoardDao;
 import com.cafe24.mysite.vo.BoardVo;
 
-public class ListAction implements Action {
+public class SearchAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String page = request.getParameter("page");
+		String inputTitle = request.getParameter("kwd");
+
 		BoardDao dao = new BoardDao();
-		List<BoardVo> list = dao.getList();
-		// List<BoardVo> list = dao.getList(Integer.parseInt(page));
+		List<BoardVo> list = dao.search(inputTitle);
 
 		request.setAttribute("list", list);
 

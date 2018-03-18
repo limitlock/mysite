@@ -10,16 +10,22 @@ public class BoardActionFactory extends AbstractActionFactory {
 		Action action = null;
 
 		if ("view".equals(actionName)) {
-			// action = new ViewFormAction();
+			action = new ViewFormAction();
 		} else if ("writeform".equals(actionName)) {
 			action = new WriteFormAction();
 		} else if ("write".equals(actionName)) {
 			action = new WriteAction();
 		} else if ("deleteform".equals(actionName)) {
 			action = new DeleteFormAction();
-		}else if ("delete".equals(actionName)) {
+		} else if ("delete".equals(actionName)) {
 			action = new DeleteAction();
-		}else {
+		} else if ("modifyform".equals(actionName)) {
+			action = new BoardModifyFormAction();
+		} else if ("modify".equals(actionName)) {
+			action = new BoardModifyAction();
+		} else if ("search".equals(actionName)) {
+			action = new SearchAction();
+		} else {
 			action = new ListAction();
 		}
 

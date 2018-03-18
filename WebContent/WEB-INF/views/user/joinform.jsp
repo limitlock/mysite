@@ -6,7 +6,7 @@
 <html>
 <head>
 <title>mysite</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <link href="/mysite/assets/css/user.css" rel="stylesheet" type="text/css">
 </head>
 <body>

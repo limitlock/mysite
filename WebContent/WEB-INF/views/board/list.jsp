@@ -16,8 +16,9 @@
 		<c:import url="/WEB-INF/views/includes/header.jsp" />
 		<div id="content">
 			<div id="board">
-				<form id="search_form" action="" method="post">
-					<input type="text" id="kwd" name="kwd" value=""> <input
+				<form id="search_form" action="/mysite/board" method="post">
+					<input type="hidden" name="a" value="search"> <input
+						type="text" id="kwd" name="kwd" value=""> <input
 						type="submit" value="찾기">
 				</form>
 				<table class="tbl-ex">
@@ -36,13 +37,11 @@
 							<td style="text-align: left; padding-left: ${20*vo.depth}px">
 								<c:choose>
 									<c:when test="${vo.oNo > 1}">
-
 										<img src="/mysite/assets/images/reply.png" />
-										<a href="">${vo.title }</a>
-
+										<a href="/mysite/board?a=view&no=${vo.no }">${vo.title }</a>
 									</c:when>
 									<c:otherwise>
-										<a href="">${vo.title }</a>
+										<a href="/mysite/board?a=view&no=${vo.no }">${vo.title }</a>
 									</c:otherwise>
 								</c:choose>
 							</td>
@@ -67,7 +66,7 @@
 							<p style="display: none">${index = count%10 }</p>
 							<c:choose>
 								<c:when test="${index ==  0}">
-									<li><a href="/mysite/board?a=list&page=${i }">${i }</a></li> 
+									<li><a href="/mysite/board?a=list&page=${i }">${i }</a></li>
 								</c:when>
 								<c:otherwise>
 									<li>${i }</li>

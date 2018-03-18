@@ -2,6 +2,7 @@ package com.cafe24.mysite.action.user;
 
 import com.cafe24.mvc.action.AbstractActionFactory;
 import com.cafe24.mvc.action.Action;
+import com.cafe24.mysite.action.board.BoardModifyFormAction;
 import com.cafe24.mysite.action.main.IndexAction;
 
 public class UserActionFactory extends AbstractActionFactory {

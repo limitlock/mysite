@@ -5,13 +5,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.cafe24.mysite.vo.UserVo;
+import com.cafe24.mysite.vo.CommentVo;
+import com.cafe24.mysite.vo.GuestBookVo;
 
-public class UserDao {
-	// Dao 안에는 비즈니스 용어를 쓰면 안된다. (나중에 혼동이 올 수 있음 => 비즈니스 용어는 서비스 영역에서!)
-
-	public boolean update(UserVo vo) {
+public class CommentDao {
+	public boolean delete(CommentVo vo) {
 		boolean result = false;
 
 		Connection conn = null;
@@ -19,14 +20,12 @@ public class UserDao {
 
 		try {
 			conn = getConnection();
+			String sql = " delete from comment where no = ? and password = ?";
 
-			String sql = " update users set name=?, gender=?, password = password(?) where no = ?";
 			pstmt = conn.prepareStatement(sql);
 
-			pstmt.setString(1, vo.getName());
-			pstmt.setString(2, vo.getGender());
-			pstmt.setString(3, vo.getPassword());
-			pstmt.setLong(4, vo.getNo());
+			pstmt.setLong(1, vo.getNo());
+			pstmt.setString(2, vo.getPassword());
 
 			int count = pstmt.executeUpdate();
 			result = (count == 1);
@@ -46,36 +45,84 @@ public class UserDao {
 			}
 
 		}
+
 		return result;
 	}
 
-	public UserVo get(Long no) {
-		UserVo result = null;
-		return result;
+	public boolean insert(CommentVo vo) {
+		boolean result = false;
 
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			conn = getConnection();
+			String sql = "insert into comment values(null, ?, ?, ?, now(), ?)";
+
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, vo.getName());
+			pstmt.setString(2, vo.getPassword());
+			pstmt.setString(3, vo.getContent());
+			pstmt.setLong(4, vo.getBoardNo());
+
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
 	}
 
-	public UserVo get(String email, String password) { // 들어갈 값이 많다면 vo 를 넣어서 사용한다.
-		UserVo result = null;
+	public List<CommentVo> GetList(Long inputBoardNo) {
+		List<CommentVo> list = new ArrayList<>();
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+
 		try {
 			conn = getConnection();
 
-			String sql = "select no, name from users where email = ? and password = password(?)";
-			pstmt = conn.prepareStatement(sql);
+			String sql = "select no, name, password, content, reg_date, board_no from comment where board_no = ?";
 
-			pstmt.setString(1, email);
-			pstmt.setString(2, password);
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, inputBoardNo);
 
 			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				result = new UserVo();
 
-				result.setNo(rs.getLong(1));
-				result.setName(rs.getString(2));
+			while (rs.next()) {
+				Long no = rs.getLong(1);
+				String name = rs.getString(2);
+				String password = rs.getString(3);
+				String content = rs.getString(4);
+				String curDate = rs.getString(5);
+				Long boardNo = rs.getLong(6);
+
+				CommentVo vo = new CommentVo();
+
+				vo.setNo(no);
+				vo.setIndex((long) list.size() + 1);
+				vo.setName(name);
+				vo.setPassword(password);
+				vo.setContent(content);
+				vo.setCurDate(curDate);
+				vo.setBoardNo(boardNo);
+
+				list.add(vo);
 			}
 
 		} catch (SQLException e) {
@@ -97,47 +144,7 @@ public class UserDao {
 
 		}
 
-		return result;
-
-	}
-
-	public boolean insert(UserVo vo) {
-		boolean result = false;
-
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-
-		try {
-			conn = getConnection();
-
-			String sql = "insert into users values(null, ?, ?,password(?),?);";
-			pstmt = conn.prepareStatement(sql);
-
-			pstmt.setString(1, vo.getName());
-			pstmt.setString(2, vo.getEmail());
-			pstmt.setString(3, vo.getPassword());
-			pstmt.setString(4, vo.getGender());
-
-			int count = pstmt.executeUpdate();
-			result = (count == 1);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-		return result;
+		return list;
 	}
 
 	private Connection getConnection() throws SQLException {

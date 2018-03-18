@@ -14,7 +14,214 @@ import com.cafe24.mysite.vo.GuestBookVo;
 public class BoardDao {
 
 	private static final int LIST_COUNT = 10;
+
 	
+	public List<BoardVo> search(String inputTitle) {
+		List<BoardVo> list = new ArrayList<>();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			String sql = "select b.no, title, reg_date, hit, a.name, group_no, order_no, depth, user_no "
+					+ "from users a, board b " + "where a.no=b.user_no " + "and title like ? "
+					+ "order by group_no desc, order_no asc " + "limit ?,?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, "%" + inputTitle + "%");
+			pstmt.setLong(2, 0L);
+			pstmt.setLong(3, 10L);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				Long no = rs.getLong(1);
+				String title = rs.getString(2);
+				System.out.println(title);
+				String curDate = rs.getString(3);
+				Long hit = rs.getLong(4);
+				String writer = rs.getString(5);
+
+				Long gNo = rs.getLong(6);
+				Long oNo = rs.getLong(7);
+				Long depth = rs.getLong(8);
+
+				Long writerNo = rs.getLong(9);
+
+				BoardVo vo = new BoardVo();
+
+				vo.setNo(no);
+				vo.setTitle(title);
+				vo.setCurDate(curDate);
+				vo.setHit(hit);
+				vo.setWriter(writer);
+
+				vo.setgNo(gNo);
+				vo.setoNo(oNo);
+				vo.setDepth(depth);
+
+				vo.setWriterNo(writerNo);
+
+				list.add(vo);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return list;
+	}
+
+	public boolean hitUpdate(BoardVo vo) {
+		boolean result = false;
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			conn = getConnection();
+			String sql = "update board set hit = (select * from ((select hit from board  where no = ?)) a)+1 where no = ?";
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setLong(1, vo.getNo());
+			pstmt.setLong(2, vo.getNo());
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
+	public List<BoardVo> viewGetList(int boardNo) {
+		List<BoardVo> list = new ArrayList<>();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+
+			// String sqlHit = "update board set hit = (select * from ((select hit from
+			// board where no = ?)) a)+1 where no = ?;";
+			// pstmt = conn.prepareStatement(sqlHit);
+			// pstmt.setLong(1, boardNo);
+			// pstmt.setLong(2, boardNo);
+			// pstmt.executeUpdate();
+
+			String sql = "select no, title, content, user_no from board where no = ?;";
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setLong(1, boardNo);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				Long no = rs.getLong(1);
+				String title = rs.getString(2);
+				String content = rs.getString(3);
+				Long writerNo = rs.getLong(4);
+
+				BoardVo vo = new BoardVo();
+
+				vo.setNo(no);
+				vo.setTitle(title);
+				vo.setContent(content);
+				vo.setWriterNo(writerNo);
+
+				list.add(vo);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return list;
+	}
+
+	public boolean update(BoardVo vo) {
+		boolean result = false;
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			conn = getConnection();
+			String sql = "update board set title = ?, content = ? where no = ? ";
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, vo.getTitle());
+			pstmt.setString(2, vo.getContent());
+			pstmt.setLong(3, vo.getNo());
+
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+	}
+
 	public boolean delete(BoardVo vo) {
 		boolean result = false;
 
@@ -62,7 +269,7 @@ public class BoardDao {
 		try {
 			conn = getConnection();
 
-			String sql = "insert into board values(null, ?, ?, (select if(isnull(g_no), 1, max(g_no)+1) from board a), 1, 0, now(),0, ?)";
+			String sql = "insert into board values(null, ?, ?, (select if(isnull(group_no), 1, max(group_no)+1) from board a), 1, 0, now(),0, ?)";
 
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, vo.getTitle());
@@ -93,7 +300,8 @@ public class BoardDao {
 		return result;
 	}
 
-	public List<BoardVo> getList(int page) {
+	// public List<BoardVo> getList(int page)
+	public List<BoardVo> getList() {
 		List<BoardVo> list = new ArrayList<>();
 
 		Connection conn = null;
@@ -102,13 +310,15 @@ public class BoardDao {
 
 		try {
 			conn = getConnection();
-			String sql = "select b.no, title, cur_date, hit, a.name, g_no, o_no, depth, user_no "
-					+ "from users a, board b " + "where a.no=b.user_no " + "order by g_no desc, o_no asc "
+			String sql = "select b.no, title, reg_date, hit, a.name, group_no, order_no, depth, user_no "
+					+ "from users a, board b " + "where a.no=b.user_no " + "order by group_no desc, order_no asc "
 					+ "limit ?,?";
 			pstmt = conn.prepareStatement(sql);
 
-			pstmt.setLong(1, (page - 1) * LIST_COUNT);
-			pstmt.setLong(2, LIST_COUNT);
+			// pstmt.setLong(1, (page - 1) * LIST_COUNT);
+			// pstmt.setLong(2, LIST_COUNT);
+			pstmt.setLong(1, 0);
+			pstmt.setLong(2, 10);
 
 			rs = pstmt.executeQuery();
 

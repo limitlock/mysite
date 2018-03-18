@@ -1,4 +1,4 @@
-package com.cafe24.mysite.action.board;
+package com.cafe24.mysite.action.comment;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,22 +9,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cafe24.mvc.action.Action;
 import com.cafe24.mvc.util.WebUtil;
-import com.cafe24.mysite.dao.BoardDao;
-import com.cafe24.mysite.vo.BoardVo;
+import com.cafe24.mysite.dao.CommentDao;
+import com.cafe24.mysite.vo.CommentVo;
 
-public class ListAction implements Action {
+public class CommentListAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String page = request.getParameter("page");
-		BoardDao dao = new BoardDao();
-		List<BoardVo> list = dao.getList();
-		// List<BoardVo> list = dao.getList(Integer.parseInt(page));
+		String boardNo = request.getParameter("boardNo");
+		
+		CommentDao dao = new CommentDao();
+		List<CommentVo> list = dao.GetList(Long.parseLong(boardNo));
 
 		request.setAttribute("list", list);
-
-		WebUtil.forward(request, response, "/WEB-INF/views/board/list.jsp");
-
+		
+		WebUtil.forward(request, response, "/WEB-INF/views/board/comment/commentform.jsp");
 	}
 
 }

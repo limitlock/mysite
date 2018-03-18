@@ -1,4 +1,4 @@
-package com.cafe24.mysite.action.user;
+package com.cafe24.mysite.action.comment;
 
 import java.io.IOException;
 
@@ -9,12 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.cafe24.mvc.action.Action;
 import com.cafe24.mvc.util.WebUtil;
 
-public class ModifyFormAction implements Action {
+public class CommentDeleteFormAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		WebUtil.forward(request, response, "/WEB-INF/views/user/modifyform.jsp");
-
+		WebUtil.forward(request, response, "/WEB-INF/views/board/comment/commentdeleteform.jsp");
 	}
 
 }
