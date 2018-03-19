@@ -37,9 +37,9 @@ public class ReplyAction implements Action {
 		vo.setWriterNo(Long.parseLong(writerNo));
 
 		BoardDao dao = new BoardDao();
-		dao.replyInsert(vo);
 
-		//dao.replyUpdate(vo);
+		dao.replyUpdate(vo);
+		dao.replyInsert(vo);  
 
 		WebUtil.redirect(request, response, "/mysite/board");
 	}

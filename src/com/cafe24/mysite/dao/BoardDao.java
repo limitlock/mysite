@@ -12,11 +12,11 @@ import com.cafe24.mysite.vo.BoardVo;
 
 public class BoardDao {
 
-	private static final int LIST_COUNT = 10;
+	private static final int LIST_COUNT = 5;
 
 	public List<BoardVo> search(String inputTitle) {
 		List<BoardVo> list = new ArrayList<>();
-
+		System.out.println("input : "+inputTitle);
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -130,13 +130,6 @@ public class BoardDao {
 
 		try {
 			conn = getConnection();
-
-			// String sqlHit = "update board set hit = (select * from ((select hit from
-			// board where no = ?)) a)+1 where no = ?;";
-			// pstmt = conn.prepareStatement(sqlHit);
-			// pstmt.setLong(1, boardNo);
-			// pstmt.setLong(2, boardNo);
-			// pstmt.executeUpdate();
 
 			String sql = "select no, title, content, user_no from board where no = ?;";
 			pstmt = conn.prepareStatement(sql);
@@ -306,12 +299,11 @@ public class BoardDao {
 
 		try {
 			conn = getConnection();
-			String sql = "update board set order_no = order_no + 1 where group_no = ? and order_no = ?";
+			String sql = "update board set order_no = order_no + 1 where group_no = ? and order_no > ?";
 			pstmt = conn.prepareStatement(sql);
 
 			pstmt.setLong(1, vo.getGroupNo());
 			pstmt.setLong(2, vo.getOrderNo());
-			pstmt.setLong(3, vo.getNo());
 
 			int count = pstmt.executeUpdate();
 			result = (count == 1);
@@ -338,27 +330,11 @@ public class BoardDao {
 
 	public boolean replyInsert(BoardVo vo) {
 		boolean result = false;
-		Long max = 0L;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		PreparedStatement mstmt = null;
-		ResultSet rs = null;
 
 		try {
 			conn = getConnection();
-
-			String max_sql = "select max(order_no) from board where group_no = ?";
-			
-			mstmt = conn.prepareStatement(max_sql);
-			System.out.println("vo.g: "+vo.getGroupNo());
-			mstmt.setLong(1, vo.getGroupNo());
-			
-			rs = mstmt.executeQuery();
-
-			if (rs.next()) {
-				max = rs.getLong(1);
-			}
-			System.out.println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmm" + max);
 
 			// 번호, 제목, 내용, 그룹번호, 그룹내 순서, 깊이, 날짜, 조회수, 회원번호
 			String sql = "insert into board values(null, ?, ?, ?, ?, ?, now(),0, ?)";
@@ -366,10 +342,8 @@ public class BoardDao {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, vo.getTitle());
 			pstmt.setString(2, vo.getContent());
-
 			pstmt.setLong(3, vo.getGroupNo());
-			pstmt.setLong(4, max+1);
-
+			pstmt.setLong(4, vo.getOrderNo() + 1);
 			pstmt.setLong(5, vo.getDepth() + 1);
 			pstmt.setLong(6, vo.getWriterNo());
 
@@ -395,8 +369,52 @@ public class BoardDao {
 		return result;
 	}
 
+	public BoardVo get() { // 들어갈 값이 많다면 vo 를 넣어서 사용한다.
+		BoardVo result = null;
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			String countBoardSql = "select count(no) from board";
+			pstmt = conn.prepareStatement(countBoardSql);
+
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				result = new BoardVo();
+
+				result.setMaxNo(rs.getLong(1));
+				System.out.println("sadihalsdhaslkdjsakljd"+rs.getLong(1));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+
+	}
+
 	// public List<BoardVo> getList(int page)
-	public List<BoardVo> getList() {
+	public List<BoardVo> getList(int page) {
 		List<BoardVo> list = new ArrayList<>();
 
 		Connection conn = null;
@@ -405,15 +423,14 @@ public class BoardDao {
 
 		try {
 			conn = getConnection();
+
 			String sql = "select b.no, title, reg_date, hit, a.name, group_no, order_no, depth, user_no "
 					+ "from users a, board b " + "where a.no=b.user_no " + "order by group_no desc, order_no asc "
 					+ "limit ?,?";
 			pstmt = conn.prepareStatement(sql);
 
-			// pstmt.setLong(1, (page - 1) * LIST_COUNT);
-			// pstmt.setLong(2, LIST_COUNT);
-			pstmt.setLong(1, 0);
-			pstmt.setLong(2, 10);
+			pstmt.setLong(1, (page - 1) * LIST_COUNT);
+			pstmt.setLong(2, LIST_COUNT);
 
 			rs = pstmt.executeQuery();
 
@@ -443,7 +460,7 @@ public class BoardDao {
 				vo.setDepth(depth);
 
 				vo.setWriterNo(writerNo);
-
+				// vo.setMaxNo(maxNo);
 				list.add(vo);
 			}
 

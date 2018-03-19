@@ -18,9 +18,11 @@ public class ListAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String page = request.getParameter("page");
 		BoardDao dao = new BoardDao();
-		List<BoardVo> list = dao.getList();
-		// List<BoardVo> list = dao.getList(Integer.parseInt(page));
-
+		//List<BoardVo> list = dao.getList();
+		List<BoardVo> list = dao.getList(Integer.parseInt(page));
+		BoardVo maxNo = dao.get();
+		
+		request.setAttribute("maxNo", maxNo.getMaxNo());
 		request.setAttribute("list", list);
 
 		WebUtil.forward(request, response, "/WEB-INF/views/board/list.jsp");

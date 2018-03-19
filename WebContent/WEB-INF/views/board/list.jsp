@@ -1,8 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,9 +17,9 @@
 		<div id="content">
 			<div id="board">
 				<form id="search_form" action="/mysite/board" method="post">
-					<input type="hidden" name="a" value="search"> <input
-						type="text" id="kwd" name="kwd" value=""> <input
-						type="submit" value="찾기">
+					<input type="hidden" name="a" value="search"> 
+					<input type="text" id="kwd" name="kwd" value=""> 
+					<input type="submit" value="찾기">
 				</form>
 				<table class="tbl-ex">
 					<tr>
@@ -33,15 +33,16 @@
 					<c:set var="count" value="${fn:length(list) }" />
 					<c:forEach items="${list }" step="1" var="vo" varStatus="status">
 						<tr>
-							<td>${count -status.count +1 }</td>
+							<fmt:parseNumber var="boardNo" value="${maxNo-status.count+1}" integerOnly="true" />
+							<td>${boardNo }</td>
 							<td style="text-align: left; padding-left: ${20*vo.depth}px">
 								<c:choose>
 									<c:when test="${vo.orderNo > 1}">
 										<img src="/mysite/assets/images/reply.png" />
 										<a href="/mysite/board?a=view&no=${vo.no }&groupNo=${vo.groupNo }&orderNo=${vo.orderNo}&depth=${vo.depth}">${vo.title }</a>
 									</c:when>
-									<c:otherwise>										
-										<a href="/mysite/board?a=view&no=${vo.no }&groupNo=${vo.groupNo }&orderNo=${vo.orderNo}&depth=${vo.depth}" >${vo.title }</a>
+									<c:otherwise>
+										<a href="/mysite/board?a=view&no=${vo.no }&groupNo=${vo.groupNo }&orderNo=${vo.orderNo}&depth=${vo.depth}">${vo.title }</a>
 									</c:otherwise>
 								</c:choose>
 							</td>
@@ -61,19 +62,56 @@
 				<div id="underpoint" class="pager">
 					<ul>
 						<c:set var="count" value="${fn:length(list) }" />
-						<li><a href="">◀ ${ss = count/5 }</a></li>
-						<c:forEach begin="1" end="5" step="1" var="i" varStatus="status">
-							<p style="display: none">${index = count%10 }</p>
+						<fmt:parseNumber var="totalPage" value="${(((maxNo-1)/5)+1)}" integerOnly="true" />
+						
+						<c:choose>
+							<c:when test="${param.page > 5 }">
+								<fmt:parseNumber var="startPage" value="${((param.page-1)/totalPage) * totalPage + 1} " integerOnly="true" />
+							</c:when>
+							<c:otherwise>
+								<fmt:parseNumber var="startPage" value="${((1-1)/totalPage) * totalPage + 1} " integerOnly="true" />
+							</c:otherwise>
+						</c:choose>
+					
+						<c:choose>
+							<c:when test="${endPage > totalPage }">
+							 <fmt:parseNumber var="endPage" value="${((startPage + totalPage ) -1) } " integerOnly="true" />
+							</c:when>
+							<c:otherwise>
+							 <fmt:parseNumber var="endPage" value="${totalPage}" integerOnly="true" />
+							</c:otherwise>
+						</c:choose>
+						
+						
+					    <c:choose>
+					    	<c:when test="${startPage > 5 }">
+					    		<li><a href="/mysite/board?a=list&page=${(param.page-5) }">◀  </a></li> 
+					    	</c:when>
+					    	<c:otherwise>
+					    		<li>◀  </li> 
+					    	</c:otherwise>
+					    </c:choose>					
+						
+						<c:forEach begin="${startPage }" end="${startPage+4}" step="1" var="i" varStatus="status">
 							<c:choose>
-								<c:when test="${index ==  0}">
-									<li><a href="/mysite/board?a=list&page=${i }">${i }</a></li>
+								<c:when test="${totalPage >= i }"> 
+									<li class="selected"><a href="/mysite/board?a=list&page=${i }">${i }</a></li>
 								</c:when>
 								<c:otherwise>
 									<li>${i }</li>
 								</c:otherwise>
 							</c:choose>
 						</c:forEach>
-						<li><a href="">▶</a></li>
+						
+						<c:choose>
+					   		 <c:when test="${totalPage > param.page  }">
+					    		<li><a href="/mysite/board?a=list&page=${(param.page+5) }">▶ </a></li> 
+					   		 </c:when>
+					   		 <c:when test="${totalPage <= param.page }">
+					   	 		<li>▶ </li> 
+					   		 </c:when>
+					    </c:choose>		
+						
 					</ul>
 				</div>
 				<c:choose>

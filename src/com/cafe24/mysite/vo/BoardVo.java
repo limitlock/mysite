@@ -1,6 +1,7 @@
 package com.cafe24.mysite.vo;
 
 public class BoardVo {
+	private Long maxNo;
 	private Long no;
 	private String title;
 	private String content;
@@ -12,6 +13,14 @@ public class BoardVo {
 	private String writer;
 	private Long writerNo;
 	private String password;
+
+	public Long getMaxNo() {
+		return maxNo;
+	}
+
+	public void setMaxNo(Long maxNo) {
+		this.maxNo = maxNo;
+	}
 
 	public Long getNo() {
 		return no;

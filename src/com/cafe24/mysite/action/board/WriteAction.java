@@ -20,6 +20,7 @@ public class WriteAction implements Action {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		String writerNo = request.getParameter("writerNo");
+		String page = request.getParameter("page");
 
 		BoardVo vo = new BoardVo();
 		vo.setTitle(title);
@@ -29,7 +30,7 @@ public class WriteAction implements Action {
 		BoardDao dao = new BoardDao();
 		dao.insert(vo);
 
-		WebUtil.redirect(request, response, "/mysite/board?a=list");
+		WebUtil.redirect(request, response, "/mysite/board?a=list&page="+page);
 		
 
 	}
