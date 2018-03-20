@@ -33,8 +33,7 @@
 					<c:set var="count" value="${fn:length(list) }" />
 					<c:forEach items="${list }" step="1" var="vo" varStatus="status">
 						<tr>
-							<fmt:parseNumber var="boardNo" value="${maxNo-status.count+1}" integerOnly="true" />
-							<td>${boardNo }</td>
+							<td>${maxNo-status.count+1 }</td>
 							<td style="text-align: left; padding-left: ${20*vo.depth}px">
 								<c:choose>
 									<c:when test="${vo.orderNo > 1}">
@@ -84,8 +83,8 @@
 						
 						
 					    <c:choose>
-					    	<c:when test="${startPage > 5 }">
-					    		<li><a href="/mysite/board?a=list&page=${(param.page-5) }">◀  </a></li> 
+					    	<c:when test="${startPage <= param.page && param.page != 1}">
+					    		<li><a href="/mysite/board?a=list&page=${(param.page-1) }">◀  </a></li> 
 					    	</c:when>
 					    	<c:otherwise>
 					    		<li>◀  </li> 
@@ -105,7 +104,7 @@
 						
 						<c:choose>
 					   		 <c:when test="${totalPage > param.page  }">
-					    		<li><a href="/mysite/board?a=list&page=${(param.page+5) }">▶ </a></li> 
+					    		<li><a href="/mysite/board?a=list&page=${(param.page+1) }">▶ </a></li> 
 					   		 </c:when>
 					   		 <c:when test="${totalPage <= param.page }">
 					   	 		<li>▶ </li> 

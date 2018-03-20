@@ -41,7 +41,7 @@ public class ReplyAction implements Action {
 		dao.replyUpdate(vo);
 		dao.replyInsert(vo);  
 
-		WebUtil.redirect(request, response, "/mysite/board");
+		WebUtil.redirect(request, response, "/mysite/board?a=list&page=1");
 	}
 
 }

@@ -21,7 +21,6 @@ public class WriteAction implements Action {
 		String content = request.getParameter("content");
 		String writerNo = request.getParameter("writerNo");
 		String page = request.getParameter("page");
-
 		BoardVo vo = new BoardVo();
 		vo.setTitle(title);
 		vo.setContent(content);

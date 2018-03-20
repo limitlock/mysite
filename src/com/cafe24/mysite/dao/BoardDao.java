@@ -14,9 +14,55 @@ public class BoardDao {
 
 	private static final int LIST_COUNT = 5;
 
+	public BoardVo searchGet(String inputTitle) { // 들어갈 값이 많다면 vo 를 넣어서 사용한다.
+		BoardVo result = null;
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			String countBoardSql = "select count(no) from board where title like ?";
+
+			pstmt = conn.prepareStatement(countBoardSql);
+			pstmt.setString(1, "%" + inputTitle + "%");
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				result = new BoardVo();
+
+				result.setMaxNo(rs.getLong(1));
+				System.out.println("sadihalsdhaslkdjsakljd" + rs.getLong(1));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return result;
+
+	}
+
 	public List<BoardVo> search(String inputTitle) {
 		List<BoardVo> list = new ArrayList<>();
-		System.out.println("input : "+inputTitle);
+		System.out.println("input : " + inputTitle);
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -29,7 +75,7 @@ public class BoardDao {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "%" + inputTitle + "%");
 			pstmt.setLong(2, 0L);
-			pstmt.setLong(3, 10L);
+			pstmt.setLong(3, 5L);
 
 			rs = pstmt.executeQuery();
 
@@ -382,12 +428,12 @@ public class BoardDao {
 			pstmt = conn.prepareStatement(countBoardSql);
 
 			rs = pstmt.executeQuery();
-			
+
 			while (rs.next()) {
 				result = new BoardVo();
 
 				result.setMaxNo(rs.getLong(1));
-				System.out.println("sadihalsdhaslkdjsakljd"+rs.getLong(1));
+				System.out.println("sadihalsdhaslkdjsakljd" + rs.getLong(1));
 			}
 
 		} catch (SQLException e) {

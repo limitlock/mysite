@@ -20,7 +20,9 @@ public class SearchAction implements Action {
 
 		BoardDao dao = new BoardDao();
 		List<BoardVo> list = dao.search(inputTitle);
-
+		BoardVo maxNo = dao.searchGet(inputTitle);
+		request.setAttribute("page", 1);
+		request.setAttribute("maxNo", maxNo.getMaxNo());
 		request.setAttribute("list", list);
 
 		WebUtil.forward(request, response, "/WEB-INF/views/board/list.jsp");
