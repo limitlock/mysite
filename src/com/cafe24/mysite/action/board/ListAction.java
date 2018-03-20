@@ -17,8 +17,10 @@ public class ListAction implements Action {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String page = request.getParameter("page");
+		
 		BoardDao dao = new BoardDao();
 		//List<BoardVo> list = dao.getList();
+		
 		List<BoardVo> list = dao.getList(Integer.parseInt(page));
 		BoardVo maxNo = dao.get();
 		
